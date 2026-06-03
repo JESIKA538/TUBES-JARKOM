@@ -141,7 +141,7 @@ def udp_ping(count=UDP_COUNT, target_host=UDP_SERVER_HOST, target_port=UDP_SERVE
     client_sock.close()
     session_duration = time.time() - start_session
 
-    # ─── HITUNG STATISTIK ───
+  # ─── HITUNG STATISTIK ───
     print("\n" + "=" * 55)
     print("  STATISTIK QoS")
     print("=" * 55)
@@ -151,10 +151,10 @@ def udp_ping(count=UDP_COUNT, target_host=UDP_SERVER_HOST, target_port=UDP_SERVE
         rtt_avg = statistics.mean(rtt_list)
         rtt_max = max(rtt_list)
 
-        # Jitter = deviasi standar selisih RTT berturut-turut
+        # Jitter = RATA-RATA (Mean) selisih RTT berturut-turut sesuai standar TIPHON
         if len(rtt_list) >= 2:
             rtt_diffs = [abs(rtt_list[i] - rtt_list[i-1]) for i in range(1, len(rtt_list))]
-            jitter = statistics.stdev(rtt_diffs) if len(rtt_diffs) > 1 else 0.0
+            jitter = statistics.mean(rtt_diffs)
         else:
             jitter = 0.0
 
