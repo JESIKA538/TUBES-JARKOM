@@ -98,10 +98,20 @@ def handle_tcp_client(conn, addr):
 
         # Cek apakah file ada
         if not os.path.isfile(filepath):
-            body = f"<h1>404 Not Found</h1><p>File '{path}' tidak ditemukan.</p>"
+            # Mengarahkan jalur untuk membaca file 404.html milik dosen di dalam folder status
+            custom_404_path = os.path.join(WEB_ROOT, 'status', '404.html')
+            
+            if os.path.isfile(custom_404_path):
+                # Jika file 404.html dari dosen ditemukan, baca isinya
+                with open(custom_404_path, 'rb') as f:
+                    body = f.read()
+            else:
+                # Cadangan teks biasa jika folder status belum ter-copy dengan benar
+                body = f"<h1>404 Not Found</h1><p>File '{path}' tidak ditemukan.</p>".encode('utf-8')
+                
             response = build_response(404, "Not Found", "text/html; charset=utf-8", body)
             conn.sendall(response)
-            log(f"[TCP] {addr[0]} | {path} | 404 Not Found")
+            log(f"[TCP] {addr[0]} | {path} | 404 Not Found (Custom Page Loaded)")
             conn.close()
             return
 
@@ -120,7 +130,19 @@ def handle_tcp_client(conn, addr):
             log(f"[TCP] {addr[0]} | {path} | 500 Internal Server Error | {e}")
 
     except Exception as e:
-        log(f"[TCP] Error menangani {addr}: {e}")
+        # Mengarahkan jalur untuk membaca file 500.html milik dosen di dalam folder status
+        error_500_path = os.path.join(WEB_ROOT, 'status', '500.html')
+        
+        if os.path.isfile(error_500_path):
+            with open(error_500_path, 'rb') as f:
+                body = f.read()
+        else:
+            # Cadangan jika file tidak ditemukan
+            body = f"<h1>500 Internal Server Error</h1><p>{str(e)}</p>".encode('utf-8')
+            
+        response = build_response(500, "Internal Server Error", "text/html; charset=utf-8", body)
+        conn.sendall(response)
+        log(f"[TCP] {addr[0]} | Error Server | 500 Internal Server Error | {e}")
     finally:
         conn.close()
 

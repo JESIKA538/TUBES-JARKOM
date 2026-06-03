@@ -84,12 +84,24 @@ def forward_to_server(request_data):
 
 # FUNGSI BUAT ERROR RESPONSE
 def build_error_response(status_code, status_text):
-    body = f"<h1>{status_code} {status_text}</h1>".encode('utf-8')
+    # Mengambil jalur folder status yang ada di direktori proxy server
+    proxy_root = os.path.dirname(os.path.abspath(__file__))
+    error_path = os.path.join(proxy_root, 'status', f'{status_code}.html')
+    
+    if os.path.isfile(error_path):
+        # Membaca file eror secara dinamis (bisa 502.html atau 504.html tergantung error_code)
+        with open(error_path, 'rb') as f:
+            body = f.read()
+    else:
+        # Cadangan teks biasa jika file html dari dosen tidak ditemukan
+        body = f"<h1>{status_code} {status_text}</h1>".encode('utf-8')
+        
     response  = f"HTTP/1.1 {status_code} {status_text}\r\n"
     response += f"Content-Type: text/html; charset=utf-8\r\n"
     response += f"Content-Length: {len(body)}\r\n"
     response += "Connection: close\r\n"
-    response += "\r\n"
+    response += "\r\n" # Double CRLF pembatas standar HTTP
+    
     return response.encode('utf-8') + body
 
 # HANDLER: SATU CLIENT
