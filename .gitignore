@@ -1,0 +1,21 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# VS Code / IDE settings
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# Code Runner temp files
+tempCodeRunnerFile.py
+
+# Local cache directories (don't upload cached websites to GitHub)
+ProxyServer/cache/*
+!ProxyServer/cache/index.html
+cache/
