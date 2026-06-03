@@ -113,8 +113,8 @@ def handle_tcp_client(conn, addr):
             conn.sendall(response)
             log(f"[TCP] {addr[0]} | {path} | 404 Not Found (Custom Page Loaded)")
             conn.close()
-            return
-
+            return 
+ 
         # Baca file dan kirim
         try:
             with open(filepath, 'rb') as f:
